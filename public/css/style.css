@@ -1,0 +1,13 @@
+body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
+.bg-pizza-red { background-color: #C62828; }
+.text-pizza-red { color: #C62828; }
+.border-pizza-red { border-color: #C62828; }
+.hover\:bg-pizza-red-dark:hover { background-color: #B71C1C; }
+.bg-pizza-red-light { background-color: #FFEBEE; }
+.animate-fade-in { animation: fadeIn 0.2s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.no-select { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+/* Zusätzliches Feedback beim Klicken */
+button:active { transform: scale(0.98); }
