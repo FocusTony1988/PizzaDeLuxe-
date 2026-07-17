@@ -349,16 +349,43 @@ window.updateGlobalState = function(field, value) {
     }
 };
 
+window.selectPizzaSauce = function(value) {
+    window.state.selectedItem.selectedSauce = value;
+    document.querySelectorAll('[id^="sauce-label-"]').forEach(lbl => {
+        lbl.className = "flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors";
+    });
+    const selectedId = value === "Tomatensoße" ? "tomato" : (value === "BBQ-Soße" ? "bbq" : (value === "Sahnesoße" ? "cream" : "none"));
+    const selectedLbl = document.getElementById(`sauce-label-${selectedId}`);
+    if (selectedLbl) {
+        selectedLbl.className = "flex items-center space-x-3 p-3 border border-pizza-red bg-red-50 rounded-lg cursor-pointer transition-colors";
+    }
+};
+
 window.openItemModal = function(itemId, categoryKey) {
     const category = window.MENU_DATA[categoryKey];
     const item = category.items.find(i => i.id === itemId);
-    window.state.selectedItem = { item, category, categoryKey, selectedSizeIdx: 0, notes: '', selectedOptions: [], menuSelections: category.title === "Spar-Menüs" ? {} : undefined };
+    const isPizza = category.title === "Pizza" || category.title === "De Luxe Kreationen";
+    const hasSauce = isPizza && item.id !== 'p0';
+    const itemOptions = item.options || (category.options && typeof category.options[0] === 'string' ? category.options : null);
+    window.state.selectedItem = { 
+        item, 
+        category, 
+        categoryKey, 
+        selectedSizeIdx: 0, 
+        notes: '', 
+        selectedOptions: [], 
+        selectedSauce: hasSauce ? "Tomatensoße" : undefined, 
+        selectedChoice: (itemOptions && itemOptions.length > 0) ? itemOptions[0] : undefined,
+        menuSelections: category.title === "Spar-Menüs" ? {} : undefined 
+    };
     
     let sizes = category.sizes || [];
     if (item.noFam) sizes = sizes.filter(s => s.id !== '50cm');
     if (item.onlySmall) sizes = sizes.filter(s => s.id !== '32cm' && s.id !== '50cm');
     const isMeatWithLarge = category.title === "Fleischgerichte" && item.hasLarge;
+    const isDrinkWithLarge = category.title === "Getränke" && item.hasLarge;
     if (isMeatWithLarge) sizes = [{ id: "std", label: "Normal", price: item.prices[0] }, { id: "large", label: "Große Portion", price: item.pricesLarge[0] }];
+    else if (isDrinkWithLarge) sizes = [{ id: "std", label: "0,33L Dose", price: item.prices[0] }, { id: "large", label: "1,0L Flasche", price: item.pricesLarge[0] }];
     else if (category.title === "Fleischgerichte") sizes = [{ id: "std", label: "Normal", price: item.prices[0] }];
     window.state.selectedItem.effectiveSizes = sizes;
 
@@ -379,9 +406,39 @@ window.openItemModal = function(itemId, categoryKey) {
         });
         content += `</div></div>`;
 
-        if (category.options && typeof category.options[0] === 'string' && !item.noOptions) {
-            content += `<div class="space-y-2"><label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Option</label><div class="space-y-3">`;
-            category.options.forEach(opt => { content += `<label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"><input type="radio" name="choice" value="${opt}" onchange="selectChoice(this.value)" class="text-pizza-red focus:ring-pizza-red w-4 h-4 accent-red-600" /><span class="text-sm font-medium text-gray-700">${opt}</span></label>`; });
+        if (hasSauce) {
+            content += `
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Soße (Standard: Tomatensoße)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center space-x-3 p-3 border border-pizza-red bg-red-50 rounded-lg cursor-pointer transition-colors" id="sauce-label-tomato">
+                            <input type="radio" name="pizza-sauce" value="Tomatensoße" checked onchange="selectPizzaSauce(this.value)" class="text-pizza-red focus:ring-pizza-red w-4 h-4 accent-red-600" />
+                            <span class="text-sm font-medium text-gray-700">Tomatensoße</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors" id="sauce-label-bbq">
+                            <input type="radio" name="pizza-sauce" value="BBQ-Soße" onchange="selectPizzaSauce(this.value)" class="text-pizza-red focus:ring-pizza-red w-4 h-4 accent-red-600" />
+                            <span class="text-sm font-medium text-gray-700">BBQ-Soße</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors" id="sauce-label-cream">
+                            <input type="radio" name="pizza-sauce" value="Sahnesoße" onchange="selectPizzaSauce(this.value)" class="text-pizza-red focus:ring-pizza-red w-4 h-4 accent-red-600" />
+                            <span class="text-sm font-medium text-gray-700">Sahnesoße</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors" id="sauce-label-none">
+                            <input type="radio" name="pizza-sauce" value="Ohne Soße" onchange="selectPizzaSauce(this.value)" class="text-pizza-red focus:ring-pizza-red w-4 h-4 accent-red-600" />
+                            <span class="text-sm font-medium text-gray-700">Ohne Soße</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+        }
+
+        const itemOptions = item.options || (category.options && typeof category.options[0] === 'string' ? category.options : null);
+        if (itemOptions && !item.noOptions) {
+            content += `<div class="space-y-2"><label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Auswahl</label><div class="grid grid-cols-2 gap-2">`;
+            itemOptions.forEach((opt, oIdx) => { 
+                const isActive = window.state.selectedItem.selectedChoice === opt;
+                content += `<label class="flex items-center space-x-3 p-3 border ${isActive ? 'border-pizza-red bg-red-50' : 'border-gray-200'} rounded-lg cursor-pointer hover:bg-gray-50 transition-colors" id="choice-label-${oIdx}"><input type="radio" name="choice" value="${opt}" ${isActive ? 'checked' : ''} onchange="selectChoice(this.value, ${oIdx}, ${itemOptions.length})" class="text-pizza-red focus:ring-pizza-red w-4 h-4 accent-red-600" /><span class="text-sm font-medium text-gray-700">${opt}</span></label>`; 
+            });
             content += `</div></div>`;
         }
         if (category.options && typeof category.options[0] === 'object') {

@@ -121,7 +121,18 @@ window.selectSize = function(idx) {
     window.updateModalPrice();
 };
 
-window.selectChoice = function(val) { window.state.selectedItem.selectedChoice = val; };
+window.selectChoice = function(val, idx, total) { 
+    window.state.selectedItem.selectedChoice = val; 
+    if (idx !== undefined && total !== undefined) {
+        for(let i=0; i<total; i++) {
+            const lbl = document.getElementById(`choice-label-${i}`);
+            if(lbl) {
+                if (i === idx) lbl.className = "flex items-center space-x-3 p-3 border border-pizza-red bg-red-50 rounded-lg cursor-pointer transition-colors";
+                else lbl.className = "flex items-center space-x-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors";
+            }
+        }
+    }
+};
 
 window.selectPasta = function(name) {
     window.state.selectedItem.selectedChoice = name;
@@ -191,8 +202,12 @@ window.updateModalPrice = function() {
 };
 
 window.addToCart = function() {
-    const { item, category, selectedSizeIdx, selectedOptions, selectedChoice, notes, effectiveSizes } = window.state.selectedItem;
+    const { item, category, selectedSizeIdx, selectedOptions, selectedChoice, selectedSauce, notes, effectiveSizes } = window.state.selectedItem;
     let finalOptions = [];
+    
+    if (selectedSauce && selectedSauce !== "Tomatensoße") {
+        finalOptions.push(`Soße: ${selectedSauce}`);
+    }
     
     if (selectedChoice) {
          if (category.title === "Nudelgerichte") finalOptions.push(`Nudelsorte: ${selectedChoice}`);

@@ -132,14 +132,19 @@ const MENU_DATA = {
     },
     drinks: {
         title: "Getränke",
-        sizes: [{id: "std", label: "Flasche/Dose", priceIndex: 0}],
+        sizes: [{id: "std", label: "Flasche", priceIndex: 0}],
         items: [
-            { id: "d1", name: "Coca Cola / Fanta / Sprite / MezzoMix (1L)", prices: [3.50], desc: "1 Liter Flasche (+Pfand)" },
-            { id: "d2", name: "Cola / Fanta / Sprite (0.33L)", prices: [2.50], desc: "0.33L Dose" },
-            { id: "d3", name: "Fuze Tea (0.4L)", prices: [3.00], desc: "" },
-            { id: "d4", name: "Zirndorfer Bier (0.5L)", prices: [3.00], desc: "Helles Bier" },
-            { id: "d5", name: "Lambrusco / Rotwein / Weißwein (0.7L)", prices: [6.00], desc: "Flasche" },
-            { id: "d6", name: "Chianti (0.7L)", prices: [8.00], desc: "Flasche" }
+            { id: "d1", name: "Coca Cola", prices: [2.50], pricesLarge: [3.50], hasLarge: true, desc: "Wahlweise als Dose (0,33L) oder Flasche (1,0L)" },
+            { id: "d2", name: "Fanta", prices: [2.50], pricesLarge: [3.50], hasLarge: true, desc: "Wahlweise als Dose (0,33L) oder Flasche (1,0L)" },
+            { id: "d3", name: "Sprite", prices: [2.50], pricesLarge: [3.50], hasLarge: true, desc: "Wahlweise als Dose (0,33L) oder Flasche (1,0L)" },
+            { id: "d4", name: "MezzoMix", prices: [2.50], pricesLarge: [3.50], hasLarge: true, desc: "Wahlweise als Dose (0,33L) oder Flasche (1,0L)" },
+            { id: "d5", name: "Fuze Tea", prices: [3.00], desc: "0,4L Flasche" },
+            { id: "d6", name: "Zirndorfer Bier", prices: [3.00], desc: "0,5L Helles Bier" },
+            { id: "d7", name: "Beck's Pils", prices: [3.00], desc: "0,5L Flasche" },
+            { id: "d8", name: "Beck's Lemon", prices: [3.00], desc: "0,33L Flasche" },
+            { id: "d9", name: "Lambrusco", prices: [8.00], desc: "0,7L Flasche" },
+            { id: "d10", name: "Rotwein / Weißwein", prices: [7.00], desc: "0,7L Flasche", options: ["Rotwein", "Weißwein"] },
+            { id: "d11", name: "Italienische Qualitätsweine", prices: [9.00], desc: "0,7L Flasche", options: ["Chianti", "Merlot", "Montepulciano", "Bardolino"] }
         ]
     }
 };
@@ -187,7 +192,8 @@ db.serialize(() => {
                 onlySmall: item.onlySmall,
                 hasLarge: item.hasLarge,
                 isSpecial: item.isSpecial,
-                noOptions: item.noOptions
+                noOptions: item.noOptions,
+                options: item.options
             });
 
             db.run(`INSERT INTO items (id, category_id, name, description, data_json) VALUES (?, ?, ?, ?, ?)`,

@@ -63,6 +63,7 @@ app.get('/api/menu', (req, res) => {
                             isSpecial: itemDataJson.isSpecial,
                             noOptions: itemDataJson.noOptions,
                             noCheeseCrust: itemDataJson.noCheeseCrust,
+                            options: itemDataJson.options,
                         };
                     }
                     if (row.price !== null) {
@@ -83,6 +84,11 @@ app.get('/api/menu', (req, res) => {
                         return 1;
                     } else if (matchB) {
                         return -1;
+                    }
+                    const idMatchA = a.id.match(/\d+/);
+                    const idMatchB = b.id.match(/\d+/);
+                    if (idMatchA && idMatchB) {
+                        return parseInt(idMatchA[0], 10) - parseInt(idMatchB[0], 10);
                     }
                     return a.name.localeCompare(b.name);
                 });
