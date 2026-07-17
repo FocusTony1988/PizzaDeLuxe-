@@ -14,6 +14,153 @@ window.scrollToCategory = function(id) {
         });
     }
 };
+window.getCategoryBanner = function(key, category) {
+    if (key === 'pizzas') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-red-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform -rotate-12 hover:rotate-0 transition-transform duration-300 cursor-default">🍕</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 text-pizza-red pointer-events-none">
+                        ${window.ICONS.pizza.replace('width="24"', 'width="80"').replace('height="24"', 'height="80"')}
+                    </div>
+                    <h3 class="font-extrabold text-gray-800 text-lg sm:text-xl uppercase tracking-widest mb-2 flex items-center gap-2 relative z-10">Unsere Pizza <span class="text-yellow-400 text-sm sm:text-base tracking-tighter" title="5 Sterne Qualität">★★★★★</span></h3>
+                    <p class="text-xs sm:text-sm text-gray-600 mb-4 leading-relaxed relative z-10">Alle unsere Pizzen werden aus Weizenmehl hergestellt sowie mit Käse ₍₇₎ und wahlweise <strong class="text-gray-800">Tomatensoße</strong>, <strong class="text-gray-800">BBQ Soße</strong> ₍ₐ, ₕ, ᵢ₎ oder <strong class="text-gray-800">Sahne Soße</strong> ₍₇₎ belegt.</p>
+                    <div class="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 inline-flex items-center gap-2 self-start shadow-sm relative z-10 flex-wrap">
+                        <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Extra Zutat:</span> 
+                        <span class="text-xs text-pizza-red font-bold bg-red-50 px-2 py-1 rounded border border-red-100">0,50 € <span class="text-[10px] text-red-500 uppercase font-medium">für 26/32cm</span></span> 
+                        <span class="text-gray-300 hidden sm:inline">|</span> 
+                        <span class="text-xs text-pizza-red font-bold bg-red-50 px-2 py-1 rounded border border-red-100">1,00 € <span class="text-[10px] text-red-500 uppercase font-medium">für 50cm</span></span>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else if (key === 'creations') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-orange-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform -rotate-12 hover:rotate-0 transition-transform duration-300 cursor-default">🌟</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 text-pizza-red pointer-events-none">
+                        ${window.ICONS.sparkle.replace('width="24"', 'width="80"').replace('height="24"', 'height="80"')}
+                    </div>
+                    <h3 class="font-extrabold text-gray-800 text-lg sm:text-xl uppercase tracking-widest mb-2 flex items-center gap-2 relative z-10">Unsere De Luxe Kreationen <span class="text-yellow-400 text-sm sm:text-base tracking-tighter" title="5 Sterne Qualität">★★★★★</span></h3>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed relative z-10">Spezielle Pizzen für die besten Kunden.<br>Wir haben zugehört und präsentieren euch unsere Sonderkreationen.</p>
+                </div>
+            </div>
+        `;
+    } else if (key === 'salads') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-green-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform rotate-12 hover:rotate-0 transition-transform duration-300 cursor-default">🥗</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 text-green-600 pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-4.97 0-9-4.03-9-9 0-2.21.8-4.23 2.12-5.78C6.67 4.38 9.17 3 12 3s5.33 1.38 6.88 3.22C20.2 7.77 21 9.79 21 12c0 4.97-4.03 9-9 9z"/><path d="M12 11c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>
+                    </div>
+                    <h3 class="font-extrabold text-gray-800 text-lg sm:text-xl uppercase tracking-widest mb-2 flex items-center gap-2 relative z-10">Unsere Salate <span class="text-yellow-400 text-sm sm:text-base tracking-tighter" title="5 Sterne Qualität">★★★★★</span></h3>
+                    <p class="text-xs sm:text-sm text-gray-600 mb-2 leading-relaxed relative z-10">Salate wahlweise mit diesen Dressings:<br><strong class="text-gray-800">Joghurt</strong> ₍₇, ₁₀₎, <strong class="text-gray-800">Balsamico</strong> ₍₁₀, ₁₂₎ oder <strong class="text-gray-800">Essig & Öl</strong> ₍₁₂₎</p>
+                    <p class="text-xs text-pizza-red font-bold relative z-10">Alle Dressings sind hausgemacht.</p>
+                </div>
+            </div>
+        `;
+    } else if (key === 'baguettes') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-amber-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform -rotate-12 hover:rotate-0 transition-transform duration-300 cursor-default">🥖</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <h3 class="font-extrabold text-gray-800 text-lg sm:text-xl uppercase tracking-widest mb-2 flex items-center gap-2 relative z-10">Unsere Baguettes <span class="text-yellow-400 text-sm sm:text-base tracking-tighter" title="5 Sterne Qualität">★★★★★</span></h3>
+                    <p class="text-sm text-gray-600 leading-relaxed relative z-10">Gut belegt und einfach lecker.</p>
+                </div>
+            </div>
+        `;
+    } else if (key === 'pasta') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-yellow-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform rotate-12 hover:rotate-0 transition-transform duration-300 cursor-default">🍝</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <h3 class="font-extrabold text-pizza-red text-lg uppercase tracking-widest mb-3 relative z-10">Wahlweise Mit:</h3>
+                    
+                    <div class="grid grid-cols-3 gap-2 mb-4 relative z-10">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-gray-800 text-sm tracking-wide">SPAGHETTI</span>
+                            <span class="text-[10px] text-gray-500 font-bold">I, M, N, 1, 3, 6</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-gray-800 text-sm tracking-wide">RIGATONI</span>
+                            <span class="text-[10px] text-gray-500 font-bold">I, M, N, 1, 3, 6</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-gray-800 text-sm tracking-wide">TORTELLINI</span>
+                            <span class="text-[10px] text-gray-500 font-bold">I, M, N, 1, 3, 6</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-red-50 border border-red-100 rounded-lg px-3 py-2 inline-flex items-center gap-2 self-start shadow-sm relative z-10 flex-wrap">
+                        <span class="text-xs font-bold text-pizza-red">Nudelgerichte mit Käse überbacken:</span> 
+                        <span class="text-xs text-gray-700 font-medium">Klein: <strong class="text-pizza-red">+ 1,00 €</strong></span> 
+                        <span class="text-gray-300 hidden sm:inline">|</span> 
+                        <span class="text-xs text-gray-700 font-medium">Groß: <strong class="text-pizza-red">+ 2,00 €</strong></span>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else if (key === 'meat') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-red-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform -rotate-6 hover:rotate-0 transition-transform duration-300 cursor-default">🥩</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <h3 class="font-extrabold text-gray-800 text-lg sm:text-xl uppercase tracking-widest mb-2 flex items-center gap-2 relative z-10">Unsere Fleischgerichte <span class="text-yellow-400 text-sm sm:text-base tracking-tighter" title="5 Sterne Qualität">★★★★★</span></h3>
+                    <p class="text-xs sm:text-sm text-gray-600 mb-2 leading-relaxed relative z-10">Jedes Gericht wird wahlweise mit <strong class="text-gray-800">Pommes</strong> oder <strong class="text-gray-800">Kroketten</strong> zubereitet.</p>
+                    <p class="text-xs text-pizza-red font-bold relative z-10">Inkl. kleinem Beilagensalat (außer beim Sandwich).</p>
+                </div>
+            </div>
+        `;
+    } else if (key === 'menus') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-yellow-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform rotate-6 hover:rotate-0 transition-transform duration-300 cursor-default">🎁</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <h3 class="font-extrabold text-gray-800 text-lg sm:text-xl uppercase tracking-widest mb-2 flex items-center gap-2 relative z-10">Unsere Spar-Menüs <span class="text-yellow-400 text-sm sm:text-base tracking-tighter" title="5 Sterne Qualität">★★★★★</span></h3>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed relative z-10">Perfekt zusammengestellt für den großen Hunger. Spare beim Bestellen von Pizza, Pasta, Salat und Getränk!</p>
+                </div>
+            </div>
+        `;
+    } else if (key === 'drinks') {
+        return `
+            <div class="mb-6 bg-white border-2 border-pizza-red rounded-xl shadow-md overflow-hidden flex flex-col sm:flex-row items-stretch transform transition-all hover:shadow-lg animate-fade-in">
+                <div class="bg-blue-50 sm:w-1/3 flex justify-center items-center relative overflow-hidden min-h-[120px] p-4">
+                    <div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1497534446932-c925b458314e?auto=format&fit=crop&w=600&q=80')] bg-cover bg-center"></div>
+                    <span class="text-6xl sm:text-7xl drop-shadow-md z-10 relative transform -rotate-12 hover:rotate-0 transition-transform duration-300 cursor-default">🥤</span>
+                </div>
+                <div class="p-5 sm:w-2/3 flex flex-col justify-center bg-white relative">
+                    <h3 class="font-extrabold text-gray-800 text-lg sm:text-xl uppercase tracking-widest mb-2 flex items-center gap-2 relative z-10">Unsere Getränke <span class="text-yellow-400 text-sm sm:text-base tracking-tighter" title="5 Sterne Qualität">★★★★★</span></h3>
+                    <p class="text-xs sm:text-sm text-gray-600 leading-relaxed relative z-10">Erfrischende Softdrinks, regionales Zirndorfer Bier oder eine Flasche Wein als perfekte Begleitung zu deinem Menü.</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    return category.description ? `<p class="text-gray-500 text-sm mb-6 italic flex items-start gap-2 bg-yellow-50 p-3 rounded-lg border border-yellow-200 shadow-sm">${window.ICONS.info.replace('width="16"', 'width="14"')} ${category.description}</p>` : '';
+};
 
 window.renderApp = function() {
     const app = document.getElementById('app-container');
@@ -23,10 +170,9 @@ window.renderApp = function() {
         <header class="bg-pizza-red text-white p-4 sticky top-0 z-40 shadow-md w-full">
             <div class="max-w-7xl mx-auto flex justify-between items-center">
                 <div class="cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <h1 class="text-2xl font-bold flex items-center gap-2">
-                        <span class="text-3xl">🍕</span>
-                        <span class="hidden sm:inline">Pizza De Luxe</span>
-                    </h1>
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-white rounded-full shadow-md border border-gray-100 p-1">
+                        <img src="/pizzadeluxe_logo_T (2).png" alt="Pizza De Luxe" class="max-w-full max-h-full object-contain" />
+                    </div>
                     <p class="text-xs opacity-90 flex items-center gap-1 mt-1 text-white">
                         ${window.ICONS.mapPin.replace('width="16"', 'width="12"').replace('height="16"', 'height="12"').replace('currentColor', '#fff')} Nürnberger Str. 46, Zirndorf
                     </p>
@@ -92,7 +238,7 @@ window.renderApp = function() {
                             <div class="flex items-baseline gap-3 mb-4 border-b pb-2 border-gray-200">
                                 <h2 class="text-2xl font-bold text-gray-800">${category.title}</h2>
                             </div>
-                            ${category.description ? `<p class="text-gray-500 text-sm mb-6 italic flex items-start gap-2 bg-yellow-50 p-3 rounded border border-yellow-100">${window.ICONS.info.replace('width="16"', 'width="14"')} ${category.description}</p>` : ''}
+                            ${window.getCategoryBanner(key, category)}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 ${category.items.map(item => `
                                     <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all hover:border-pizza-red group flex flex-col justify-between h-full">
@@ -142,9 +288,14 @@ window.renderApp = function() {
                     </a>
                 </div>
                 <div class="text-sm">
-                    <p class="font-bold text-gray-300 mb-1">Impressum</p>
-                    <p>Nagem Elrai - Einzelunternehmer</p>
-                    <p class="mt-2">Hauptwebsite: <a href="https://www.pizza-deluxe-zirndorf.de/" class="text-pizza-red hover:text-white transition-colors font-medium" target="_blank">www.pizza-deluxe-zirndorf.de</a></p>
+                    <p class="font-bold text-gray-300 mb-2">Rechtliches</p>
+                    <div class="flex flex-col gap-1">
+                        <p class="text-gray-400">Nagem Elrai - Einzelunternehmer</p>
+                        <div class="mt-2 flex gap-4 justify-center lg:justify-start">
+                            <a href="https://www.pizza-deluxe-zirndorf.de/impressum-datenschutz/" class="text-pizza-red hover:text-white transition-colors font-medium underline" target="_blank">Impressum</a>
+                            <a href="https://www.pizza-deluxe-zirndorf.de/impressum-datenschutz/" class="text-pizza-red hover:text-white transition-colors font-medium underline" target="_blank">Datenschutzerklärung</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>
@@ -162,7 +313,7 @@ window.renderApp = function() {
         <div id="cookie-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl p-4 sm:p-6 z-[100]">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-sm text-gray-600 text-center sm:text-left">
-                    Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern. Weitere Informationen zum Datenschutz finden Sie auf unserer <a href="https://www.pizza-deluxe-zirndorf.de/" class="text-pizza-red hover:underline font-bold" target="_blank">Hauptwebsite</a>.
+                    Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern. Weitere Informationen zum Datenschutz finden Sie in unserer <a href="https://www.pizza-deluxe-zirndorf.de/datenschutz" class="text-pizza-red hover:underline font-bold" target="_blank">Datenschutzerklärung</a>.
                 </div>
                 <button onclick="acceptCookies()" class="w-full sm:w-auto bg-gray-900 text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors whitespace-nowrap shadow-md">Verstanden</button>
             </div>
@@ -242,9 +393,12 @@ window.openItemModal = function(itemId, categoryKey) {
             content += `</div></div>`;
         }
         if (category.extras) {
-            content += `<div class="p-4 bg-yellow-50 rounded-xl border border-yellow-100"><p class="text-xs text-yellow-800 font-bold uppercase mb-3">Extras</p><div class="space-y-2">`;
-            category.extras.forEach(extra => { content += `<label class="flex items-center justify-between cursor-pointer group"><span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">${extra.name} (+<span class="extra-price-display" data-small="${extra.priceSmall}" data-large="${extra.priceLarge}">${(extra.priceSmall || 0).toFixed(2)}</span>€)</span><input type="checkbox" onchange="toggleExtra('${extra.name}', ${extra.priceSmall}, ${extra.priceLarge}, this.checked)" class="rounded text-pizza-red focus:ring-pizza-red w-5 h-5 border-gray-300 accent-red-600" /></label>`; });
-            content += `</div></div>`;
+            const applicableExtras = category.extras.filter(extra => !(extra.name === "Käserand" && item.noCheeseCrust));
+            if (applicableExtras.length > 0) {
+                content += `<div class="p-4 bg-yellow-50 rounded-xl border border-yellow-100"><p class="text-xs text-yellow-800 font-bold uppercase mb-3">Extras</p><div class="space-y-2">`;
+                applicableExtras.forEach(extra => { content += `<label class="flex items-center justify-between cursor-pointer group"><span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">${extra.name} (+<span class="extra-price-display" data-small="${extra.priceSmall}" data-large="${extra.priceLarge}">${(extra.priceSmall || 0).toFixed(2)}</span>€)</span><input type="checkbox" onchange="toggleExtra('${extra.name}', ${extra.priceSmall}, ${extra.priceLarge}, this.checked)" class="rounded text-pizza-red focus:ring-pizza-red w-5 h-5 border-gray-300 accent-red-600" /></label>`; });
+                content += `</div></div>`;
+            }
         }
         if (showIngredientsList) {
             let ePrice = category.extraPriceMap[0];

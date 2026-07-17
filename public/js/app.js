@@ -88,7 +88,7 @@ window.getSuggestionPrompt = function(cartItems) {
 };
 
 window.fetchGeminiSuggestion = async function(cartItems) {
-    if (window.state.suggestionLoading || cartItems.length === 0) return;
+    if (!window.GEMINI_API_KEY || window.state.suggestionLoading || cartItems.length === 0) return;
     window.state.suggestionLoading = true;
     window.state.geminiSuggestion = null;
     window.renderApp();

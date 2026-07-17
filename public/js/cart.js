@@ -115,7 +115,8 @@ window.selectSize = function(idx) {
     document.querySelectorAll('.extra-price-display').forEach(span => {
         const small = parseFloat(span.getAttribute('data-small'));
         const large = parseFloat(span.getAttribute('data-large'));
-        span.textContent = (idx === 0 ? small : large).toFixed(2);
+        const isLargeExtra = (category.title === "Pizza" || category.title === "De Luxe Kreationen") ? idx === 2 : idx > 0;
+        span.textContent = (isLargeExtra ? large : small).toFixed(2);
     });
     window.updateModalPrice();
 };
@@ -135,7 +136,9 @@ window.toggleExtra = function(name, pSmall, pLarge, checked) {
     const idx = window.state.selectedItem.selectedSizeIdx || 0;
     if (checked) {
         window.state.selectedItem.selectedOptions = window.state.selectedItem.selectedOptions.filter(o => !o.startsWith(name));
-        const price = idx === 0 ? pSmall : pLarge;
+        const { category } = window.state.selectedItem;
+        const isLargeExtra = (category.title === "Pizza" || category.title === "De Luxe Kreationen") ? idx === 2 : idx > 0;
+        const price = isLargeExtra ? pLarge : pSmall;
         window.state.selectedItem.selectedOptions.push(`${name} (+${price.toFixed(2)}€)`);
     } else window.state.selectedItem.selectedOptions = window.state.selectedItem.selectedOptions.filter(o => !o.startsWith(name));
     window.updateModalPrice();
@@ -173,7 +176,8 @@ window.calculatePrice = function() {
     if (category.extras) {
          category.extras.forEach(extra => {
              if (selectedOptions.some(o => o.startsWith(extra.name))) {
-                extraCost += (selectedSizeIdx === 0 ? extra.priceSmall : extra.priceLarge);
+                const isLargeExtra = (category.title === "Pizza" || category.title === "De Luxe Kreationen") ? selectedSizeIdx === 2 : selectedSizeIdx > 0;
+                extraCost += (isLargeExtra ? extra.priceLarge : extra.priceSmall);
              }
          });
     }
@@ -205,7 +209,8 @@ window.addToCart = function() {
         } else {
              const matchingExtra = category.extras ? category.extras.find(e => optName.startsWith(e.name)) : null;
              if (matchingExtra) {
-                 const p = selectedSizeIdx === 0 ? matchingExtra.priceSmall : matchingExtra.priceLarge;
+                 const isLargeExtra = (category.title === "Pizza" || category.title === "De Luxe Kreationen") ? selectedSizeIdx === 2 : selectedSizeIdx > 0;
+                 const p = isLargeExtra ? matchingExtra.priceLarge : matchingExtra.priceSmall;
                  finalOptions.push(`${matchingExtra.name} (+${p.toFixed(2)}€)`);
              } else {
                  finalOptions.push(optName);

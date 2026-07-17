@@ -62,6 +62,7 @@ app.get('/api/menu', (req, res) => {
                             hasLarge: itemDataJson.hasLarge,
                             isSpecial: itemDataJson.isSpecial,
                             noOptions: itemDataJson.noOptions,
+                            noCheeseCrust: itemDataJson.noCheeseCrust,
                         };
                     }
                     if (row.price !== null) {
@@ -73,7 +74,18 @@ app.get('/api/menu', (req, res) => {
                     }
                 });
 
-                menuData[cat.id].items = Object.values(itemsMap);
+                menuData[cat.id].items = Object.values(itemsMap).sort((a, b) => {
+                    const matchA = a.name.match(/^(\d+)/);
+                    const matchB = b.name.match(/^(\d+)/);
+                    if (matchA && matchB) {
+                        return parseInt(matchA[1], 10) - parseInt(matchB[1], 10);
+                    } else if (matchA) {
+                        return 1;
+                    } else if (matchB) {
+                        return -1;
+                    }
+                    return a.name.localeCompare(b.name);
+                });
                 pendingCategories--;
 
                 if (pendingCategories === 0) {
