@@ -1,0 +1,92 @@
+Schritt 1: Den HP-Drucker für automatischen Druck vorbereiten
+Damit dein Drucker E-Mails empfangen und ausdrucken kann, musst du die HP ePrint Funktion aktivieren.
+
+Schalte deinen HP-Drucker ein und stelle sicher, dass er mit dem WLAN verbunden ist.
+
+Öffne die HP Smart App auf deinem Handy oder PC (oder gib die IP-Adresse des Druckers in deinen Internet-Browser ein).
+
+Suche nach den Einstellungen für "Web-Dienste" (Web Services) und aktiviere sie.
+
+Der Drucker druckt nun ein Infoblatt aus. Auf diesem Blatt findest du den Druckercode und deine persönliche ePrint-E-Mail-Adresse (z. B. xyz123@hpeprint.com).
+
+Optional: Du kannst dich auf der HP-Website (HP Smart) einloggen, um diese kryptische E-Mail-Adresse in etwas Einfacheres abzuändern (z. B. pizzeria-test-druck@hpeprint.com).
+
+Test: Schicke von deinem privaten Handy eine normale E-Mail mit etwas Text an diese Drucker-E-Mail-Adresse. Wenn der Drucker das Blatt nach 1–2 Minuten automatisch ausdruckt, steht die Verbindung!
+
+Schritt 2: Deinen WhatsApp-Bestell-Link erstellen
+Du möchtest, dass sich beim Kunden WhatsApp öffnet und dort schon ein Text bereitsteht. Dafür nutzen wir die offizielle WhatsApp-Schnittstelle (wa.me).
+
+Erstelle deinen Link nach diesem Muster:
+[https://wa.me/DEINE_NUMMER?text=HIER_DER_TEXT](https://wa.me/DEINE_NUMMER?text=HIER_DER_TEXT)
+
+Wichtig: Die Telefonnummer muss im internationalen Format ohne + oder 00 eingegeben werden (z. B. 491711234567 für Deutschland).
+
+Leerzeichen im Text müssen als %20 geschrieben werden.
+
+Beispiel für deinen Link:
+
+Plaintext
+https://wa.me/491711234567?text=Hallo%20Pizzeria!%20Ich%20habe%20gerade%20auf%20der%20Website%20meine%20Bestellung%20abgeschickt%20und%20wollte%20mich%20kurz%20melden.
+Schritt 3: Das Formular in deine Website einbauen
+Wir nutzen jetzt den kostenlosen Anbieter Formsubmit.co, um die Daten abzufangen, an den Drucker zu senden und den Kunden zu WhatsApp weiterzuleiten.
+
+Kopiere diesen HTML-Code und füge ihn an der Stelle auf deiner Website ein, an der das Bestellfenster erscheinen soll:
+
+HTML
+<!-- START DES BESTELLFORMULARS -->
+<!-- Ersetze 'DEINE-DRUCKER-EMAIL@hpeprint.com' mit deiner echten HP-Drucker-E-Mail -->
+<form action="https://formsubmit.co/DEINE-DRUCKER-EMAIL@hpeprint.com" method="POST" style="max-width: 400px; margin: 0 auto; font-family: sans-serif;">
+
+    <!-- 1. Sicherheits-Feature von Formsubmit gegen Spam -->
+    <input type="hidden" name="_captcha" value="false">
+
+    <!-- 2. Der magische Trick: Wohin soll der Kunde nach dem Klick? -->
+    <!-- Ersetze den Link unten mit deinem eigenen WhatsApp-Link aus Schritt 2 -->
+    <input type="hidden" name="_next" value="https://wa.me/491711234567?text=Hallo%20Pizzeria!%20Ich%20habe%20gerade%20auf%20der%20Website%20meine%20Bestellung%20abgeschickt%20und%20wollte%20mich%20kurz%20melden.">
+
+    <!-- 3. Die Eingabefelder für den Kunden -->
+    <div style="margin-bottom: 15px;">
+        <label style="display:block; margin-bottom: 5px; font-weight: bold;">Dein Name:</label>
+        <input type="text" name="Kunden-Name" placeholder="Z. B. Max Mustermann" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display:block; margin-bottom: 5px; font-weight: bold;">Deine Bestellung (z. B. Pizza & Getränke):</label>
+        <textarea name="Bestellung" rows="4" placeholder="Z. B. 1x Pizza Mista, 1x Cola" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: none;"></textarea>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display:block; margin-bottom: 5px; font-weight: bold;">Lieferadresse / Abholzeit:</label>
+        <input type="text" name="Adresse-oder-Uhrzeit" placeholder="Z. B. Hauptstraße 10 oder Abholung um 19:00 Uhr" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+
+    <!-- 4. Der Absende-Button -->
+    <button type="submit" style="width: 100%; background-color: #25D366; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer;">
+        Bestellung per WhatsApp abschicken
+    </button>
+
+</form>
+<!-- ENDE DES BESTELLFORMULARS -->
+Schritt 4: Die erste Test-Aktivierung (Wichtig!)
+Formsubmit.co verlangt beim allersten Mal, dass du die E-Mail-Adresse kurz bestätigst, damit niemand Spam an fremde Drucker schicken kann.
+
+Gehe auf deine Website und fülle das Formular einmal selbst als Test aus.
+
+Klicke auf den Button.
+
+Du wirst auf eine Seite von Formsubmit geleitet, auf der steht: "Check your Inbox to activate your form".
+
+Dein HP-Drucker wird nun eine E-Mail von Formsubmit ausdrucken. Auf diesem Zettel ist ein Aktivierungs-Link aufgedruckt.
+
+Tippe diesen Link entweder am PC ab oder fotografiere ihn mit dem Handy, um ihn zu öffnen.
+
+Fertig! Ab jetzt ist die Verbindung freigeschaltet.
+
+So läuft der Test ab jetzt für deine Kunden:
+Der Kunde füllt Name, Pizza und Adresse auf deiner Website aus.
+
+Er klickt auf den grünen Button "Bestellung per WhatsApp abschicken".
+
+Im Hintergrund: Formsubmit schickt die Daten an deinen HP-Drucker. In der Küche startet der Druck auf dem A4-Blatt.
+
+Im Vordergrund: Der Kunde merkt davon nichts. Bei ihm öffnet sich sofort WhatsApp mit deinem vorgefertigten Text. Er klickt bei WhatsApp auf "Senden" – und du hast den Chat mit ihm offen, um eventuelle Rückfragen zu klären.

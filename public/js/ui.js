@@ -367,6 +367,9 @@ window.openItemModal = function(itemId, categoryKey) {
     const isPizza = category.title === "Pizza" || category.title === "De Luxe Kreationen";
     const hasSauce = isPizza && item.id !== 'p0';
     const itemOptions = item.options || (category.options && typeof category.options[0] === 'string' ? category.options : null);
+    let activeSubItemLabel = 'Pizza';
+    if (item.id === 'm3') activeSubItemLabel = 'Nudeln';
+    
     window.state.selectedItem = { 
         item, 
         category, 
@@ -376,7 +379,9 @@ window.openItemModal = function(itemId, categoryKey) {
         selectedOptions: [], 
         selectedSauce: hasSauce ? "Tomatensoße" : undefined, 
         selectedChoice: (itemOptions && itemOptions.length > 0) ? itemOptions[0] : undefined,
-        menuSelections: category.title === "Spar-Menüs" ? {} : undefined 
+        menuSelections: category.title === "Spar-Menüs" ? {} : undefined,
+        activeSubItem: category.title === "Spar-Menüs" ? 1 : undefined,
+        activeSubItemLabel: category.title === "Spar-Menüs" ? activeSubItemLabel : undefined
     };
     
     let sizes = category.sizes || [];
@@ -393,7 +398,59 @@ window.openItemModal = function(itemId, categoryKey) {
     let content = `<div id="item-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-50 animate-fade-in" onclick="if(event.target.id==='item-modal') closeModal()"><div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md max-h-[90vh] overflow-y-auto border border-gray-100 flex flex-col"><div class="sticky top-0 bg-white z-10 flex justify-between items-center p-4 border-b border-gray-100"><h3 class="text-xl font-bold truncate pr-4 text-gray-900">${item.name}</h3><button onclick="closeModal()" class="bg-gray-100 p-2 rounded-full text-gray-500 hover:bg-gray-200 transition-colors">${window.ICONS.x.replace('width="24"', 'width="20"')}</button></div><div class="p-6 pt-4 space-y-6">`;
 
     if (category.title === "Spar-Menüs") {
-        content += renderMenuInputs(item);
+        let tabsHtml = '<div class="flex border-b border-gray-200 mb-4">';
+        if (item.id === 'm1') tabsHtml += `<button class="menu-tab active flex-1 py-3 text-sm font-bold border-b-2 border-pizza-red text-pizza-red">Pizza</button>`;
+        else if (item.id === 'm2') {
+            tabsHtml += `<button id="tab-1" class="menu-tab active flex-1 py-3 text-sm font-bold border-b-2 border-pizza-red text-pizza-red" onclick="switchMenuTab(1, 'Pizza')">Pizza 1</button>`;
+            tabsHtml += `<button id="tab-2" class="menu-tab flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-700" onclick="switchMenuTab(2, 'Pizza')">Pizza 2</button>`;
+        } else if (item.id === 'm3') {
+            tabsHtml += `<button id="tab-1" class="menu-tab active flex-1 py-3 text-sm font-bold border-b-2 border-pizza-red text-pizza-red" onclick="switchMenuTab(1, 'Nudeln')">Nudeln 1</button>`;
+            tabsHtml += `<button id="tab-2" class="menu-tab flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-700" onclick="switchMenuTab(2, 'Nudeln')">Nudeln 2</button>`;
+        } else if (item.id === 'm4') {
+            tabsHtml += `<button id="tab-1" class="menu-tab active flex-1 py-3 text-sm font-bold border-b-2 border-pizza-red text-pizza-red" onclick="switchMenuTab(1, 'Pizza')">Pizza</button>`;
+            tabsHtml += `<button id="tab-2" class="menu-tab flex-1 py-3 text-sm font-bold border-b-2 border-transparent text-gray-500 hover:text-gray-700" onclick="switchMenuTab(2, 'Nudeln')">Nudeln</button>`;
+        } else if (item.id === 'm5') {
+            tabsHtml += `<button class="menu-tab active flex-1 py-3 text-sm font-bold border-b-2 border-pizza-red text-pizza-red">Hauptgericht</button>`;
+        }
+        tabsHtml += '</div>';
+
+        const pizzaOptions = window.MENU_DATA.pizzas.items.filter(p => parseInt(p.id.replace('p', '')) <= 17 || p.id === 'p0m').map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+        const pastaOptions = window.MENU_DATA.pasta.items.filter(n => !n.isSpecial).map(n => `<option value="${n.name}">${n.name}</option>`).join('');
+        const selectClass = "w-full border border-gray-300 rounded-lg p-3 mb-3 text-sm bg-gray-50 focus:bg-white focus:border-pizza-red outline-none transition-colors appearance-none";
+
+        let selectorHtml = '';
+        if (item.id === 'm5') {
+            selectorHtml += `<div class="p-3 bg-blue-50 rounded-lg border border-blue-100 mb-3"><p class="text-xs font-bold text-blue-800 mb-2 uppercase">Hauptgericht wählen</p><select id="menu-dropdown" onchange="handleMenuComboChange(this)" class="${selectClass} mb-0 bg-white"><option value="" data-type="Pizza">-- Wähle Pizza oder Pasta --</option><optgroup label="Pizzen">${window.MENU_DATA.pizzas.items.filter(p => parseInt(p.id.replace('p', '')) <= 17 || p.id === 'p0m').map(p => `<option value="${p.name}" data-type="Pizza">${p.name}</option>`).join('')}</optgroup><optgroup label="Nudeln">${window.MENU_DATA.pasta.items.filter(n => !n.isSpecial).map(n => `<option value="${n.name}" data-type="Nudeln">${n.name}</option>`).join('')}</optgroup></select></div>`;
+        } else {
+            selectorHtml += `<div id="pizza-selector" class="pizza-only" style="${activeSubItemLabel === 'Pizza' ? '' : 'display:none;'}"><select onchange="updateMenuSelection(this.value)" class="${selectClass} menu-item-select"><option value="">Pizza wählen...</option>${pizzaOptions}</select></div>`;
+            selectorHtml += `<div id="pasta-selector" class="pasta-only" style="${activeSubItemLabel === 'Nudeln' ? '' : 'display:none;'}"><select onchange="updateMenuSelection(this.value)" class="${selectClass} menu-item-select"><option value="">Nudelgericht wählen...</option>${pastaOptions}</select></div>`;
+        }
+
+        content += tabsHtml + selectorHtml;
+        
+        const pizzaCategory = window.MENU_DATA['pizzas'];
+        const pastaCategory = window.MENU_DATA['pasta'];
+
+        if (pizzaCategory && pizzaCategory.extras) {
+            content += `<div class="p-4 bg-yellow-50 rounded-xl border border-yellow-100 pizza-only" style="${activeSubItemLabel === 'Pizza' ? '' : 'display:none;'}"><p class="text-xs text-yellow-800 font-bold uppercase mb-3">Pizza Extras</p><div class="space-y-2">`;
+            pizzaCategory.extras.forEach(extra => { content += `<label class="flex items-center justify-between cursor-pointer group"><span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">${extra.name} (+<span class="extra-price-display">${(extra.priceSmall || 0).toFixed(2)}</span>€)</span><input type="checkbox" value="${extra.name}" onchange="toggleMenuOption('${extra.name}', this.checked)" class="menu-checkbox rounded text-pizza-red focus:ring-pizza-red w-5 h-5 border-gray-300 accent-red-600" /></label>`; });
+            content += `</div></div>`;
+        }
+
+        if (pastaCategory && pastaCategory.extras) {
+            content += `<div class="p-4 bg-yellow-50 rounded-xl border border-yellow-100 pasta-only" style="${activeSubItemLabel === 'Nudeln' ? '' : 'display:none;'}"><p class="text-xs text-yellow-800 font-bold uppercase mb-3">Nudel Extras</p><div class="space-y-2">`;
+            pastaCategory.extras.forEach(extra => { content += `<label class="flex items-center justify-between cursor-pointer group"><span class="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">${extra.name} (+<span class="extra-price-display">${(extra.priceSmall || 0).toFixed(2)}</span>€)</span><input type="checkbox" value="${extra.name}" onchange="toggleMenuOption('${extra.name}', this.checked)" class="menu-checkbox rounded text-pizza-red focus:ring-pizza-red w-5 h-5 border-gray-300 accent-red-600" /></label>`; });
+            content += `</div></div>`;
+        }
+
+        let ePrice = pizzaCategory.extraPriceMap ? pizzaCategory.extraPriceMap[0] : 0.50;
+        content += `<div class="space-y-2 mt-4 pizza-only" style="${activeSubItemLabel === 'Pizza' ? '' : 'display:none;'}"><div class="flex justify-between items-center"><label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Zutaten extra</label><span class="text-[10px] font-bold text-pizza-red bg-red-50 px-2 py-1 rounded-full border border-red-100">+${(ePrice || 0).toFixed(2)}€ / Zutat</span></div><div class="h-48 overflow-y-auto border border-gray-200 rounded-xl p-3 grid grid-cols-1 gap-2 bg-gray-50/50 custom-scrollbar">`;
+        window.EXTRA_INGREDIENTS.forEach(ing => { content += `<label class="flex items-center space-x-3 p-2 hover:bg-white rounded-lg transition-colors cursor-pointer"><input type="checkbox" value="${ing}" onchange="toggleMenuOption('${ing}', this.checked)" class="menu-checkbox rounded text-pizza-red focus:ring-pizza-red w-4 h-4 border-gray-300 accent-red-600" /><span class="text-sm text-gray-700">${ing}</span></label>`; });
+        content += `</div></div>`;
+
+        const saladOptions = window.MENU_DATA.salads.options.map(o => `<option value="${o}">${o}</option>`).join('');
+        content += `<div class="mt-4 pt-4 border-t border-gray-200"><select onchange="window.state.selectedItem.menuSelections['Salat'] = this.value" class="${selectClass}"><option value="">Salat-Dressing...</option>${saladOptions}</select>`;
+        content += `<select onchange="window.state.selectedItem.menuSelections['Getränk'] = this.value" class="${selectClass} mb-0"><option value="">Getränk...</option><option>Cola (1L)</option><option>Fanta (1L)</option><option>Sprite (1L)</option><option>MezzoMix (1L)</option>${item.id==='m5'?'<option>Zirndorfer (0.5L)</option>':''}</select></div>`;
     } else {
         content += `<p class="text-gray-500 text-sm leading-relaxed">${item.desc || ''}</p><div class="space-y-2"><label class="block text-xs font-bold text-gray-500 uppercase tracking-wide">Größe</label><div class="grid grid-cols-1 gap-2" id="size-selection">`;
         sizes.forEach((size, idx) => {
@@ -475,4 +532,70 @@ window.closeModal = function() {
     document.getElementById('modal-layer').innerHTML = ''; 
     window.state.selectedItem = null;
     document.body.classList.remove('modal-open'); 
+};
+
+window.switchMenuTab = function(idx, label) {
+    window.state.selectedItem.activeSubItem = idx;
+    window.state.selectedItem.activeSubItemLabel = label;
+    
+    document.querySelectorAll('.menu-tab').forEach(tab => {
+        tab.classList.remove('active', 'border-pizza-red', 'text-pizza-red');
+        tab.classList.add('border-transparent', 'text-gray-500');
+    });
+    const activeTab = document.getElementById(`tab-${idx}`);
+    if (activeTab) {
+        activeTab.classList.add('active', 'border-pizza-red', 'text-pizza-red');
+        activeTab.classList.remove('border-transparent', 'text-gray-500');
+    }
+
+    document.querySelectorAll('.pizza-only').forEach(el => el.style.display = label === 'Pizza' ? '' : 'none');
+    document.querySelectorAll('.pasta-only').forEach(el => el.style.display = label === 'Nudeln' ? '' : 'none');
+
+    const pizzaSel = document.querySelector('#pizza-selector select');
+    const pastaSel = document.querySelector('#pasta-selector select');
+    if (pizzaSel) pizzaSel.value = window.state.selectedItem.menuSelections[`Pizza ${idx}`] || '';
+    if (pastaSel) pastaSel.value = window.state.selectedItem.menuSelections[`Nudeln ${idx}`] || '';
+
+    const prefix = `[${label} ${idx}]`;
+    document.querySelectorAll('.menu-checkbox').forEach(cb => {
+        cb.checked = window.state.selectedItem.selectedOptions.some(opt => opt === `${prefix} ${cb.value}`);
+    });
+    
+    window.updateModalPrice();
+};
+
+window.handleMenuComboChange = function(selectEl) {
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    const type = selectedOption.getAttribute('data-type');
+    if (!type) return;
+
+    window.state.selectedItem.activeSubItemLabel = type;
+    
+    window.state.selectedItem.selectedOptions = [];
+    document.querySelectorAll('.menu-checkbox').forEach(cb => cb.checked = false);
+
+    window.state.selectedItem.menuSelections['Hauptgericht'] = selectEl.value;
+
+    document.querySelectorAll('.pizza-only').forEach(el => el.style.display = type === 'Pizza' ? '' : 'none');
+    document.querySelectorAll('.pasta-only').forEach(el => el.style.display = type === 'Nudeln' ? '' : 'none');
+    
+    window.updateModalPrice();
+};
+
+window.updateMenuSelection = function(val) {
+    const { activeSubItem, activeSubItemLabel } = window.state.selectedItem;
+    window.state.selectedItem.menuSelections[`${activeSubItemLabel} ${activeSubItem}`] = val;
+};
+
+window.toggleMenuOption = function(val, isChecked) {
+    const { activeSubItem, activeSubItemLabel } = window.state.selectedItem;
+    const prefix = `[${activeSubItemLabel} ${activeSubItem || 1}]`;
+    const fullVal = `${prefix} ${val}`;
+
+    if (isChecked) {
+        window.state.selectedItem.selectedOptions.push(fullVal);
+    } else {
+        window.state.selectedItem.selectedOptions = window.state.selectedItem.selectedOptions.filter(o => o !== fullVal);
+    }
+    window.updateModalPrice();
 };

@@ -165,7 +165,32 @@ window.calculatePrice = function() {
     if (!window.state.selectedItem) return 0;
     const { item, category, selectedSizeIdx, selectedOptions, effectiveSizes } = window.state.selectedItem;
     
-    if (category.title === "Spar-Menüs") return item.prices[0];
+    if (category.title === "Spar-Menüs") {
+        let cost = item.prices[0];
+        const pizzaCategory = window.MENU_DATA['pizzas'];
+        const pastaCategory = window.MENU_DATA['pasta'];
+        
+        selectedOptions.forEach(opt => {
+            const rawNameMatch = opt.match(/^\[(?:Pizza|Nudeln) \d*\] (.+)$/);
+            const rawName = rawNameMatch ? rawNameMatch[1] : opt;
+
+            const pExtra = pizzaCategory.extras?.find(e => e.name === rawName);
+            if (pExtra) { cost += pExtra.priceSmall || 0; return; }
+            
+            const nExtra = pastaCategory.extras?.find(e => e.name === rawName);
+            if (nExtra) { cost += nExtra.priceSmall || 0; return; }
+
+            if (window.EXTRA_INGREDIENTS.includes(rawName)) {
+                const isPizza = opt.startsWith('[Pizza');
+                if (isPizza) {
+                    cost += pizzaCategory.extraPriceMap ? pizzaCategory.extraPriceMap[0] : 0.50;
+                } else {
+                    cost += pastaCategory.extraPriceMap ? pastaCategory.extraPriceMap[0] : 0.50;
+                }
+            }
+        });
+        return cost;
+    }
 
     const size = effectiveSizes[selectedSizeIdx];
     let base = 0;
@@ -214,53 +239,47 @@ window.addToCart = function() {
          else finalOptions.push(selectedChoice);
     }
     
-    selectedOptions.forEach(optName => {
-        if (window.EXTRA_INGREDIENTS.includes(optName)) {
-             let sizeKey = 0; 
-             if (effectiveSizes[selectedSizeIdx].id === '32cm') sizeKey = 1;
-             if (effectiveSizes[selectedSizeIdx].id === '50cm') sizeKey = 2;
-             const price = category.extraPriceMap[sizeKey];
-             finalOptions.push(`${optName} (+${price.toFixed(2)}€)`);
-        } else {
-             const matchingExtra = category.extras ? category.extras.find(e => optName.startsWith(e.name)) : null;
-             if (matchingExtra) {
-                 const isLargeExtra = (category.title === "Pizza" || category.title === "De Luxe Kreationen") ? selectedSizeIdx === 2 : selectedSizeIdx > 0;
-                 const p = isLargeExtra ? matchingExtra.priceLarge : matchingExtra.priceSmall;
-                 finalOptions.push(`${matchingExtra.name} (+${p.toFixed(2)}€)`);
-             } else {
-                 finalOptions.push(optName);
+    if (category.title !== "Spar-Menüs") {
+        selectedOptions.forEach(optName => {
+            if (window.EXTRA_INGREDIENTS.includes(optName)) {
+                 let sizeKey = 0; 
+                 if (effectiveSizes[selectedSizeIdx].id === '32cm') sizeKey = 1;
+                 if (effectiveSizes[selectedSizeIdx].id === '50cm') sizeKey = 2;
+                 const price = category.extraPriceMap[sizeKey];
+                 finalOptions.push(`${optName} (+${price.toFixed(2)}€)`);
+            } else {
+                 const matchingExtra = category.extras ? category.extras.find(e => optName.startsWith(e.name)) : null;
+                 if (matchingExtra) {
+                     const isLargeExtra = (category.title === "Pizza" || category.title === "De Luxe Kreationen") ? selectedSizeIdx === 2 : selectedSizeIdx > 0;
+                    const p = isLargeExtra ? matchingExtra.priceLarge : matchingExtra.priceSmall;
+                     finalOptions.push(`${matchingExtra.name} (+${p.toFixed(2)}€)`);
+                 } else {
+                     finalOptions.push(optName);
+                 }
              }
-        }
-    });
+        });
+    }
 
     if (category.title === "Spar-Menüs") {
-         const container = document.getElementById('menu-selector-container');
-         const inputs = container.querySelectorAll('select');
          let missing = false;
          let menuOps = [];
-         
-         if (item.id === 'm5') {
-             const pizzaVal = container.querySelector('[data-menu-key="pizza_choice"]').value;
-             const pastaVal = container.querySelector('[data-menu-key="pasta_choice"]').value;
-             const saladVal = container.querySelector('[data-menu-key="salad"]').value;
-             const drinkVal = container.querySelector('[data-menu-key="drink"]').value;
+         const selections = window.state.selectedItem.menuSelections;
 
-             if ((!pizzaVal && !pastaVal) || !saladVal || !drinkVal) {
-                 missing = true;
-             } else {
-                 if (pizzaVal) menuOps.push(`Pizza: ${pizzaVal}`);
-                 if (pastaVal) menuOps.push(`Nudel: ${pastaVal}`);
-                 menuOps.push(`Salat: ${saladVal}`);
-                 menuOps.push(`Getränk: ${drinkVal}`);
-             }
-         } else {
-             inputs.forEach(i => { 
-                 if(!i.value) missing=true; 
-                 else {
-                     let label = i.getAttribute('data-menu-key').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-                     menuOps.push(`${label}: ${i.value}`); 
-                 }
-             });
+         if (item.id === 'm1') {
+             if (!selections['Pizza 1'] || !selections['Salat'] || !selections['Getränk']) missing = true;
+             else { menuOps.push(`Pizza: ${selections['Pizza 1']}`); menuOps.push(`Salat: ${selections['Salat']}`); menuOps.push(`Getränk: ${selections['Getränk']}`); }
+         } else if (item.id === 'm2') {
+             if (!selections['Pizza 1'] || !selections['Pizza 2'] || !selections['Salat'] || !selections['Getränk']) missing = true;
+             else { menuOps.push(`Pizza 1: ${selections['Pizza 1']}`); menuOps.push(`Pizza 2: ${selections['Pizza 2']}`); menuOps.push(`Salat: ${selections['Salat']}`); menuOps.push(`Getränk: ${selections['Getränk']}`); }
+         } else if (item.id === 'm3') {
+             if (!selections['Nudeln 1'] || !selections['Nudeln 2'] || !selections['Salat'] || !selections['Getränk']) missing = true;
+             else { menuOps.push(`Nudeln 1: ${selections['Nudeln 1']}`); menuOps.push(`Nudeln 2: ${selections['Nudeln 2']}`); menuOps.push(`Salat: ${selections['Salat']}`); menuOps.push(`Getränk: ${selections['Getränk']}`); }
+         } else if (item.id === 'm4') {
+             if (!selections['Pizza 1'] || !selections['Nudeln 2'] || !selections['Salat'] || !selections['Getränk']) missing = true;
+             else { menuOps.push(`Pizza: ${selections['Pizza 1']}`); menuOps.push(`Nudeln: ${selections['Nudeln 2']}`); menuOps.push(`Salat: ${selections['Salat']}`); menuOps.push(`Getränk: ${selections['Getränk']}`); }
+         } else if (item.id === 'm5') {
+             if (!selections['Hauptgericht'] || !selections['Salat'] || !selections['Getränk']) missing = true;
+             else { menuOps.push(`Hauptgericht: ${selections['Hauptgericht']}`); menuOps.push(`Salat: ${selections['Salat']}`); menuOps.push(`Getränk: ${selections['Getränk']}`); }
          }
          
          if (missing) { 
@@ -274,7 +293,30 @@ window.addToCart = function() {
              }, 2000);
              return; 
          }
-         finalOptions = menuOps;
+         
+         finalOptions = [...menuOps];
+         const pizzaCategory = window.MENU_DATA['pizzas'];
+         const pastaCategory = window.MENU_DATA['pasta'];
+
+         window.state.selectedItem.selectedOptions.forEach(opt => {
+             const rawNameMatch = opt.match(/^\[(?:Pizza|Nudeln) \d*\] (.+)$/);
+             const rawName = rawNameMatch ? rawNameMatch[1] : opt;
+             let optPrice = 0;
+
+             const pExtra = pizzaCategory.extras?.find(e => e.name === rawName);
+             if (pExtra) optPrice = pExtra.priceSmall || 0;
+             else {
+                 const nExtra = pastaCategory.extras?.find(e => e.name === rawName);
+                 if (nExtra) optPrice = nExtra.priceSmall || 0;
+                 else if (window.EXTRA_INGREDIENTS.includes(rawName)) {
+                     const isPizza = opt.startsWith('[Pizza');
+                     optPrice = isPizza ? (pizzaCategory.extraPriceMap ? pizzaCategory.extraPriceMap[0] : 0.50) : (pastaCategory.extraPriceMap ? pastaCategory.extraPriceMap[0] : 0.50);
+                 }
+             }
+             
+             if (optPrice > 0) finalOptions.push(`${opt} (+${optPrice.toFixed(2)}€)`);
+             else finalOptions.push(opt);
+         });
     }
 
     const finalPrice = window.calculatePrice();
@@ -367,23 +409,94 @@ window.handleCheckout = function() {
     }
 
     let message = `*Neue Bestellung bei Pizza De Luxe*\n\n`;
+    let printOrderDetails = "";
     const cartTotal = window.state.cart.reduce((sum, item) => sum + item.selectedPrice, 0);
     
     window.state.cart.forEach(item => {
         message += `▪️ *${item.name}* (${item.selectedSize})`;
-        if(item.selectedOptions && item.selectedOptions.length > 0) message += `\n  + ${item.selectedOptions.join(" | ")}`;
-        if(item.userNotes) message += `\n  _Note: ${item.userNotes}_`;
+        printOrderDetails += `${item.name.toUpperCase()} (${item.selectedSize}) ... ${item.selectedPrice.toFixed(2)} €`;
+        if(item.selectedOptions && item.selectedOptions.length > 0) {
+            message += `\n  + ${item.selectedOptions.join(" | ")}`;
+            printOrderDetails += `\n   + ${item.selectedOptions.join("\n   + ")}`;
+        }
+        if(item.userNotes) {
+            message += `\n  _Note: ${item.userNotes}_`;
+            printOrderDetails += `\n   HINWEIS: ${item.userNotes}`;
+        }
         message += `\n  Preis: ${item.selectedPrice.toFixed(2)}€\n\n`;
+        printOrderDetails += `\n\n`;
     });
 
     message += `------------------------\n*Gesamt: ${cartTotal.toFixed(2)}€*\n------------------------\n\n`;
+    printOrderDetails += `--------------------------------\nGESAMTPREIS: ${cartTotal.toFixed(2)} €\n--------------------------------`;
+
     message += `👤 *Kunde:*\n${window.state.customerInfo.name}\n`;
     message += `📍 *Adresse:*\n${window.state.customerInfo.address}\n`;
     if(window.state.customerInfo.notes) message += `📝 *Anmerkung:*\n${window.state.customerInfo.notes}\n`;
     
     const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/${window.RESTAURANT_NUMBER}?text=${encoded}`, '_blank');
+    const whatsappLink = `https://wa.me/${window.RESTAURANT_NUMBER}?text=${encoded}`;
     
+    const popupHtml = `
+<div id="orderPopup" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;" class="animate-fade-in">
+    <div style="background: white; padding: 30px; border-radius: 8px; max-width: 450px; width: 90%; box-shadow: 0px 4px 15px rgba(0,0,0,0.2); position: relative; font-family: sans-serif;">
+        <span onclick="closeOrderPopup()" style="position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #aaa;">&times;</span>
+        
+        <h3 style="margin-top: 0; color: #333; font-size: 1.25rem; font-weight: bold; margin-bottom: 10px;">Bestell-Übersicht</h3>
+        <p style="color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
+            Du wirst gleich zu WhatsApp weitergeleitet, um deine Bestellung direkt an uns zu senden.
+        </p>
+
+        <form id="pizzeriaForm" action="https://formsubmit.co/tonyerler@gmail.com" method="POST" target="_blank">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="${whatsappLink}">
+            <input type="hidden" name="_subject" value="NEUE KÜCHEN-BESTELLUNG - ${window.state.customerInfo.name}">
+            <input type="hidden" name="_template" value="table">
+            
+            <input type="hidden" name="Kunde" value="${window.state.customerInfo.name}">
+            <input type="hidden" name="Adresse" value="${window.state.customerInfo.address}">
+            <input type="hidden" name="Anmerkung" value="${window.state.customerInfo.notes || 'Keine'}">
+            <input type="hidden" name="BESTELLUNG" value="
+${printOrderDetails}">
+
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px solid #eee;">
+                <label style="display: flex; align-items: flex-start; cursor: pointer; font-size: 15px; font-weight: bold; margin: 0;">
+                    <input type="checkbox" id="printCheckbox" checked style="margin-right: 10px; margin-top: 3px; transform: scale(1.2);">
+                    <span style="line-height: 1.4;">Bestellung direkt an die Küche drucken (empfohlen für schnellere Zubereitung)</span>
+                </label>
+            </div>
+
+            <button type="button" onclick="processOrder()" style="width: 100%; background-color: #25D366; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: opacity 0.2s;">
+                Bestätigen & Weiter zu WhatsApp
+            </button>
+        </form>
+    </div>
+</div>`;
+
+    const existingPopup = document.getElementById('orderPopup');
+    if (existingPopup) existingPopup.remove();
+    document.body.insertAdjacentHTML('beforeend', popupHtml);
+};
+
+window.closeOrderPopup = function() {
+    const popup = document.getElementById('orderPopup');
+    if (popup) popup.remove();
+};
+
+window.processOrder = function() {
+    var isPrintChecked = document.getElementById('printCheckbox').checked;
+    var form = document.getElementById('pizzeriaForm');
+    var whatsAppLink = form.querySelector('input[name="_next"]').value;
+
+    if (isPrintChecked) {
+        form.submit();
+    } else {
+        window.open(whatsAppLink, '_blank');
+    }
+    
+    window.closeOrderPopup();
+    
+    // Reset state after handling submission
     window.state.cart = [];
     window.state.isCartOpen = false;
     window.state.customerInfo = { name: "", address: "", notes: "" };
