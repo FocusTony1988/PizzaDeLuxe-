@@ -293,7 +293,7 @@ window.renderApp = function() {
                         <p class="text-gray-400">Nagem Elrai - Einzelunternehmer</p>
                         <div class="mt-2 flex gap-4 justify-center lg:justify-start">
                             <a href="https://www.pizza-deluxe-zirndorf.de/impressum-datenschutz/" class="text-pizza-red hover:text-white transition-colors font-medium underline" target="_blank">Impressum</a>
-                            <a href="https://www.pizza-deluxe-zirndorf.de/impressum-datenschutz/" class="text-pizza-red hover:text-white transition-colors font-medium underline" target="_blank">Datenschutzerklärung</a>
+                            <a href="/datenschutz.html" class="text-pizza-red hover:text-white transition-colors font-medium underline">Datenschutzerklärung</a>
                         </div>
                     </div>
                 </div>
@@ -313,7 +313,7 @@ window.renderApp = function() {
         <div id="cookie-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl p-4 sm:p-6 z-[100]">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-sm text-gray-600 text-center sm:text-left">
-                    Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern. Weitere Informationen zum Datenschutz finden Sie in unserer <a href="https://www.pizza-deluxe-zirndorf.de/datenschutz" class="text-pizza-red hover:underline font-bold" target="_blank">Datenschutzerklärung</a>.
+                    Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern. Weitere Informationen zum Datenschutz finden Sie in unserer <a href="/datenschutz.html" class="text-pizza-red hover:underline font-bold">Datenschutzerklärung</a>.
                 </div>
                 <button onclick="acceptCookies()" class="w-full sm:w-auto bg-gray-900 text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors whitespace-nowrap shadow-md">Verstanden</button>
             </div>
