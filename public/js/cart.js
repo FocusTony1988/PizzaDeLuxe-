@@ -447,10 +447,11 @@ window.handleCheckout = function() {
             Du wirst gleich zu WhatsApp weitergeleitet, um deine Bestellung direkt an uns zu senden.
         </p>
 
-        <form id="pizzeriaForm" action="https://formsubmit.co/tonyerler@gmail.com" method="POST" target="_blank">
+        <form id="pizzeriaForm" action="https://formsubmit.co/cxycc663dy684@hpeprint.com" method="POST" target="_blank">
             <input type="hidden" name="_captcha" value="false">
             <input type="hidden" name="_next" value="${whatsappLink}">
             <input type="hidden" name="_subject" value="NEUE KÜCHEN-BESTELLUNG - ${window.state.customerInfo.name}">
+            <input type="hidden" name="_cc" value="tonyerler@gmail.com">
             <input type="hidden" name="_template" value="table">
             
             <input type="hidden" name="Kunde" value="${window.state.customerInfo.name}">
