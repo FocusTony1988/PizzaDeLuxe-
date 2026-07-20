@@ -10,6 +10,12 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
+app.get('/ping', (req, res) => res.send('OK'));
+
+app.get('/datenschutz', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'datenschutz.html'));
+});
+
 const db = new sqlite3.Database('./database.sqlite', (err) => {
     if (err) {
         console.error("Error opening database " + err.message);
