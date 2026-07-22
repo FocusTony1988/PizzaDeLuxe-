@@ -409,12 +409,17 @@ window.handleCheckout = function() {
     }
 
     let message = `*Neue Bestellung bei Pizza De Luxe*\n\n`;
-    let printOrderDetails = "";
-    const cartTotal = window.state.cart.reduce((sum, item) => sum + item.selectedPrice, 0);
-    
-    window.state.cart.forEach(item => {
+    let printOrderDetails = `================================================\n`;
+    printOrderDetails += `KUNDE: ${window.state.customerInfo.name.toUpperCase()}\n`;
+    printOrderDetails += `ADRESSE: ${window.state.customerInfo.address.toUpperCase()}\n`;
+    if(window.state.customerInfo.notes) {
+        printOrderDetails += `HINWEIS: ${window.state.customerInfo.notes.toUpperCase()}\n`;
+    }
+    printOrderDetails += `================================================\n\n`;
+
+    window.state.cart.forEach((item, index) => {
         message += `▪️ *${item.name}* (${item.selectedSize})`;
-        printOrderDetails += `${item.name.toUpperCase()} (${item.selectedSize}) ... ${item.selectedPrice.toFixed(2)} €`;
+        printOrderDetails += `${index + 1}. ${item.name.toUpperCase()} (${item.selectedSize}) ... ${item.selectedPrice.toFixed(2)} €`;
         if(item.selectedOptions && item.selectedOptions.length > 0) {
             message += `\n  + ${item.selectedOptions.join(" | ")}`;
             printOrderDetails += `\n   + ${item.selectedOptions.join("\n   + ")}`;
@@ -428,7 +433,7 @@ window.handleCheckout = function() {
     });
 
     message += `------------------------\n*Gesamt: ${cartTotal.toFixed(2)}€*\n------------------------\n\n`;
-    printOrderDetails += `--------------------------------\nGESAMTPREIS: ${cartTotal.toFixed(2)} €\n--------------------------------`;
+    printOrderDetails += `------------------------------------------------\nGESAMTBETRAG: ${cartTotal.toFixed(2)} €\n================================================`;
 
     message += `👤 *Kunde:*\n${window.state.customerInfo.name}\n`;
     message += `📍 *Adresse:*\n${window.state.customerInfo.address}\n`;
@@ -449,14 +454,11 @@ window.handleCheckout = function() {
 
         <form id="pizzeriaForm" action="https://api.web3forms.com/submit" method="POST" target="_blank">
             <input type="hidden" name="access_key" value="c8c6365a-ad9b-48c3-b3e8-d4d5de165c51">
-            <input type="hidden" name="subject" value="NEUE KÜCHEN-BESTELLUNG - ${window.state.customerInfo.name}">
+            <input type="hidden" name="subject" value="🍕 NEUE BESTELLUNG - ${window.state.customerInfo.name} (${cartTotal.toFixed(2)}€)">
             <input type="hidden" name="redirect" value="${whatsappLink}">
-            <input type="hidden" name="from_name" value="Pizza De Luxe Bestellsystem">
+            <input type="hidden" name="from_name" value="PIZZA DE LUXE KÜCHE">
             
-            <input type="hidden" name="Kundenname" value="${window.state.customerInfo.name}">
-            <input type="hidden" name="Adresse" value="${window.state.customerInfo.address}">
-            <input type="hidden" name="Anmerkung" value="${window.state.customerInfo.notes || 'Keine'}">
-            <input type="hidden" name="Bestellung" value="
+            <input type="hidden" name="KÜCHEN_BON" value="
 ${printOrderDetails}">
 
             <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px solid #eee;">
@@ -489,11 +491,16 @@ window.processOrder = function() {
     var whatsAppLink = form.querySelector('input[name="redirect"]').value;
 
     if (isPrintChecked) {
-        form.submit();
-    } else {
-        window.open(whatsAppLink, '_blank');
+        var formData = new FormData(form);
+        fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: formData
+        }).catch(function(err) {
+            console.error('Silent print submission error:', err);
+        });
     }
     
+    window.open(whatsAppLink, '_blank');
     window.closeOrderPopup();
     
     // Reset state after handling submission
