@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-app.get('/ping', (req, res) => res.send('OK'));
+app.get(['/ping', '/health'], (req, res) => res.status(200).send('pong'));
 
 app.get('/datenschutz', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'datenschutz.html'));
