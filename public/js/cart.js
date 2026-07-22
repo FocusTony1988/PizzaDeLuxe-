@@ -408,6 +408,7 @@ window.handleCheckout = function() {
         return;
     }
 
+    const cartTotal = window.state.cart.reduce((sum, item) => sum + item.selectedPrice, 0);
     let message = `*Neue Bestellung bei Pizza De Luxe*\n\n`;
     let printOrderDetails = `================================================\n`;
     printOrderDetails += `KUNDE: ${window.state.customerInfo.name.toUpperCase()}\n`;
