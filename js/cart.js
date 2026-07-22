@@ -447,16 +447,16 @@ window.handleCheckout = function() {
             Du wirst gleich zu WhatsApp weitergeleitet, um deine Bestellung direkt an uns zu senden.
         </p>
 
-        <form id="pizzeriaForm" action="https://formsubmit.co/tonyerler@gmail.com" method="POST" target="_blank">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_next" value="${whatsappLink}">
-            <input type="hidden" name="_subject" value="NEUE KÜCHEN-BESTELLUNG - ${window.state.customerInfo.name}">
-            <input type="hidden" name="_template" value="table">
+        <form id="pizzeriaForm" action="https://api.web3forms.com/submit" method="POST" target="_blank">
+            <input type="hidden" name="access_key" value="c8c6365a-ad9b-48c3-b3e8-d4d5de165c51">
+            <input type="hidden" name="subject" value="NEUE KÜCHEN-BESTELLUNG - ${window.state.customerInfo.name}">
+            <input type="hidden" name="redirect" value="${whatsappLink}">
+            <input type="hidden" name="from_name" value="Pizza De Luxe Bestellsystem">
             
-            <input type="hidden" name="Kunde" value="${window.state.customerInfo.name}">
+            <input type="hidden" name="Kundenname" value="${window.state.customerInfo.name}">
             <input type="hidden" name="Adresse" value="${window.state.customerInfo.address}">
             <input type="hidden" name="Anmerkung" value="${window.state.customerInfo.notes || 'Keine'}">
-            <input type="hidden" name="BESTELLUNG" value="
+            <input type="hidden" name="Bestellung" value="
 ${printOrderDetails}">
 
             <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0; border: 1px solid #eee;">
@@ -486,7 +486,7 @@ window.closeOrderPopup = function() {
 window.processOrder = function() {
     var isPrintChecked = document.getElementById('printCheckbox').checked;
     var form = document.getElementById('pizzeriaForm');
-    var whatsAppLink = form.querySelector('input[name="_next"]').value;
+    var whatsAppLink = form.querySelector('input[name="redirect"]').value;
 
     if (isPrintChecked) {
         form.submit();
